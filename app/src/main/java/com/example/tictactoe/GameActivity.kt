@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.tictactoe.databinding.ActivityGameBinding
+import androidx.appcompat.app.AlertDialog
+import androidx.activity.OnBackPressedCallback
 
 class GameActivity : AppCompatActivity(),View.OnClickListener {
 
@@ -16,6 +18,12 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showExitConfirmationDialog()
+            }
+        })
 
         binding.btn0.setOnClickListener(this)
         binding.btn1.setOnClickListener(this)
@@ -152,5 +160,16 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 updateGameData(this)
             }
         }
+    }
+
+    private fun showExitConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Quitter le jeu")
+            .setMessage("Êtes-vous sûr de vouloir quitter la partie ?")
+            .setPositiveButton("Oui") { _, _ ->
+                finish()
+            }
+            .setNegativeButton("Non", null)
+            .show()
     }
 }

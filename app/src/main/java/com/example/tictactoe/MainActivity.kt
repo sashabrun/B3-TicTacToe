@@ -8,6 +8,8 @@ import com.example.tictactoe.databinding.ActivityMainBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import androidx.appcompat.app.AlertDialog
+import androidx.activity.OnBackPressedCallback
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -19,6 +21,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showExitConfirmationDialog()
+            }
+        })
 
         binding.playOfflineBtn.setOnClickListener {
             createOfflineGame()
@@ -77,5 +85,16 @@ class MainActivity : AppCompatActivity() {
 
     fun startGame() {
         startActivity(Intent(this, GameActivity::class.java))
+    }
+
+    private fun showExitConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Quitter l'application")
+            .setMessage("Êtes-vous sûr de vouloir quitter l'application ?")
+            .setPositiveButton("Oui") { _, _ ->
+                finish()
+            }
+            .setNegativeButton("Non", null)
+            .show()
     }
 }
