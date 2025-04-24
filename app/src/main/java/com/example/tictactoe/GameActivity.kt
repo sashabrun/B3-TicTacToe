@@ -164,12 +164,12 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
 
     private fun showExitConfirmationDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Quitter le jeu")
-            .setMessage("Êtes-vous sûr de vouloir quitter la partie ?")
-            .setPositiveButton("Oui") { _, _ ->
+            .setTitle("Quit the game")
+            .setMessage("Are you sure you want to leave the game?")
+            .setPositiveButton("Yes") { _, _ ->
                 finish()
             }
-            .setNegativeButton("Non", null)
+            .setNegativeButton("No", null)
             .show()
     }
 }

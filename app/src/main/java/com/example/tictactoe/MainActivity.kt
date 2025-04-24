@@ -89,12 +89,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun showExitConfirmationDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Quitter l'application")
-            .setMessage("Êtes-vous sûr de vouloir quitter l'application ?")
-            .setPositiveButton("Oui") { _, _ ->
+            .setTitle("Exit the app?")
+            .setMessage("Are you sure you want to exit the app?")
+            .setPositiveButton("Yes") { _, _ ->
                 finish()
             }
-            .setNegativeButton("Non", null)
+            .setNegativeButton("No", null)
             .show()
     }
 }
