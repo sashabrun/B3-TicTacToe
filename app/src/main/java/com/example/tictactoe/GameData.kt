@@ -11,6 +11,8 @@ object GameData {
     var myID = ""
 
     fun saveGameModel(model : GameModel){
+        model.lastUpdated = System.currentTimeMillis()
+
         _gameModel.postValue(model)
         if(model.gameId!="-1"){
             Firebase.firestore.collection("games")

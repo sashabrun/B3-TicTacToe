@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        NotificationUtils.createNotificationChannel(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -50,6 +51,12 @@ class MainActivity : AppCompatActivity() {
         binding.joinOnlineGameBtn.setOnClickListener {
             it.startAnimation(AnimationUtils.loadAnimation(this, R.anim.button_click))
             joinOnlineGame()
+        }
+
+        binding.historyBtn.setOnClickListener {
+            it.startAnimation(AnimationUtils.loadAnimation(this, R.anim.button_click))
+            startActivity(Intent(this, MatchHistoryActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
 

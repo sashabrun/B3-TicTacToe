@@ -14,6 +14,7 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
     lateinit var binding: ActivityGameBinding
 
     private var gameModel : GameModel? = null
+    private var isGameScreenActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +63,16 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
         super.onDestroy()
     }
 
+    override fun onResume() {
+        super.onResume()
+        isGameScreenActive = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isGameScreenActive = false
+    }
+
     fun setUI(){
         gameModel?.apply {
             binding.btn0.text = filledPos[0]
@@ -103,12 +114,19 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                         if (playersPresent.size < 2 && gameId != "-1") {
                             "Opponent left the game"
                         } else {
+                            if (GameData.myID == currentPlayer) {
+                                if (!isGameScreenActive) {
+                                    NotificationUtils.showTurnNotification(applicationContext, gameId)
+                                }
+                            }
                             when(GameData.myID){
                                 currentPlayer -> "Your turn"
                                 else -> "$currentPlayer turn"
                             }
                         }
+
                     }
+
                     GameStatus.FINISHED -> {
                         if(winner.isNotEmpty()) {
                             when(GameData.myID){

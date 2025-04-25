@@ -20,4 +20,5 @@
     <string name="_1_the_host_creates_a_game_and_receives_a_game_id_n2_the_host_shares_this_id_with_a_friend_n3_the_friend_joins_using_this_id_n4_the_host_clicks_start_game_to_begin_n5_players_take_turns_until_the_game_ends">1. The host creates a game and receives a game ID\n2. The host shares this ID with a friend\n3. The friend joins using this ID\n4. The host clicks \'Start Game\' to begin\n5. Players take turns until the game ends</string>
     <string name="winning_strategies">Winning Strategies:</string>
     <string name="try_to_control_the_center_cell_n_if_you_can_t_win_on_your_next_move_block_your_opponent_from_winning_n_create_opportunities_for_multiple_winning_lines_n_watch_for_diagonal_opportunities_they_re_often_overlooked">• Try to control the center cell\n• If you can\'t win on your next move, block your opponent from winning\n• Create opportunities for multiple winning lines\n• Watch for diagonal opportunities - they\'re often overlooked</string>
+    <string name="match_history">Match History</string>
 </resources>

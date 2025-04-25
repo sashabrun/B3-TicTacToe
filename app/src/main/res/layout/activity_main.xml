@@ -36,6 +36,16 @@
         tools:layout_editor_absoluteX="16dp">
 
         <Button
+            android:id="@+id/history_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="4dp"
+            android:padding="8dp"
+            android:text="@string/match_history"
+            app:cornerRadius="8dp" />
+
+        <Button
             android:id="@+id/play_offline_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

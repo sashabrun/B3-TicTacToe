@@ -9,7 +9,8 @@ data class GameModel (
     var gameStatus : GameStatus = GameStatus.CREATED,
     var currentPlayer : String = (arrayOf("X","O"))[Random.nextInt(2)],
     var winningLine : List<Int> = listOf(),
-    var playersPresent : MutableList<String> = mutableListOf()
+    var playersPresent : MutableList<String> = mutableListOf(),
+    var lastUpdated : Long = System.currentTimeMillis()
 )
 
 enum class GameStatus{
