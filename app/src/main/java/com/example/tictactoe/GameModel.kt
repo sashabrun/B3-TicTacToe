@@ -8,12 +8,14 @@ data class GameModel (
     var winner : String ="",
     var gameStatus : GameStatus = GameStatus.CREATED,
     var currentPlayer : String = (arrayOf("X","O"))[Random.nextInt(2)],
-    var winningLine : List<Int> = listOf()
+    var winningLine : List<Int> = listOf(),
+    var playersPresent : MutableList<String> = mutableListOf()
 )
 
 enum class GameStatus{
     CREATED,
     JOINED,
     INPROGRESS,
-    FINISHED
+    FINISHED,
+    ABANDONED
 }

@@ -53,6 +53,15 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
         }
     }
 
+    override fun onDestroy() {
+        gameModel?.let {
+            if (it.gameId != "-1" && it.gameStatus != GameStatus.FINISHED) {
+                GameData.markPlayerLeft(it.gameId)
+            }
+        }
+        super.onDestroy()
+    }
+
     fun setUI(){
         gameModel?.apply {
             binding.btn0.text = filledPos[0]
@@ -78,19 +87,29 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 when(gameStatus){
                     GameStatus.CREATED -> {
                         binding.startGameBtn.visibility = View.INVISIBLE
-                        "Game ID :$gameId"
+                        "Game ID: $gameId"
                     }
-                    GameStatus.JOINED ->{
-                        "Click on start game"
-                    }
-                    GameStatus.INPROGRESS ->{
-                        binding.startGameBtn.visibility = View.INVISIBLE
-                        when(GameData.myID){
-                            currentPlayer -> "Your turn"
-                            else -> "$currentPlayer turn"
+                    GameStatus.JOINED -> {
+                        if (playersPresent.size < 2) {
+                            binding.startGameBtn.isEnabled = false
+                            "Waiting for opponent to join..."
+                        } else {
+                            binding.startGameBtn.isEnabled = true
+                            "Click on start game"
                         }
                     }
-                    GameStatus.FINISHED ->{
+                    GameStatus.INPROGRESS -> {
+                        binding.startGameBtn.visibility = View.INVISIBLE
+                        if (playersPresent.size < 2 && gameId != "-1") {
+                            "Opponent left the game"
+                        } else {
+                            when(GameData.myID){
+                                currentPlayer -> "Your turn"
+                                else -> "$currentPlayer turn"
+                            }
+                        }
+                    }
+                    GameStatus.FINISHED -> {
                         if(winner.isNotEmpty()) {
                             when(GameData.myID){
                                 winner -> "You won"
@@ -99,20 +118,29 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                         }
                         else "DRAW"
                     }
+                    GameStatus.ABANDONED -> {
+                        binding.startGameBtn.isEnabled = false
+                        "Opponent left the game"
+                    }
                 }
         }
     }
 
     fun startGame(){
         gameModel?.apply {
-            updateGameData(
-                GameModel(
-                    gameId = gameId,
-                    gameStatus = GameStatus.INPROGRESS,
-                    filledPos = mutableListOf("","","","","","","","",""),
-                    winningLine = listOf()
+            if (gameId == "-1" || playersPresent.size >= 2) {
+                updateGameData(
+                    GameModel(
+                        gameId = gameId,
+                        gameStatus = GameStatus.INPROGRESS,
+                        filledPos = mutableListOf("","","","","","","","",""),
+                        winningLine = listOf(),
+                        playersPresent = playersPresent
+                    )
                 )
-            )
+            } else {
+                Toast.makeText(applicationContext, "Waiting for opponent to join", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -161,6 +189,11 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 return
             }
 
+            if (gameId != "-1" && playersPresent.size < 2) {
+                Toast.makeText(applicationContext, "Opponent left the game", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             if(gameId!="-1" && currentPlayer!=GameData.myID ){
                 Toast.makeText(applicationContext,"Not your turn",Toast.LENGTH_SHORT).show()
                 return
@@ -183,6 +216,11 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
             .setTitle("Quit the game")
             .setMessage("Are you sure you want to leave the game?")
             .setPositiveButton("Yes") { _, _ ->
+                gameModel?.let {
+                    if (it.gameId != "-1" && it.gameStatus != GameStatus.FINISHED) {
+                        GameData.markPlayerLeft(it.gameId)
+                    }
+                }
                 finish()
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
             }

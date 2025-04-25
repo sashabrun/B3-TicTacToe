@@ -23,11 +23,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Set up action bar for the options menu
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Add animations to buttons
         val buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation)
         binding.playOfflineBtn.startAnimation(buttonAnimation)
         binding.createOnlineGameBtn.startAnimation(buttonAnimation)
@@ -63,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_rules -> {
-                // Open Rules Activity with animation
                 val intent = Intent(this, RulesActivity::class.java)
                 startActivity(intent)
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
@@ -87,7 +84,8 @@ class MainActivity : AppCompatActivity() {
         GameData.saveGameModel(
             GameModel(
                 gameStatus = GameStatus.CREATED,
-                gameId = Random.nextInt(1000..9999).toString()
+                gameId = Random.nextInt(1000..9999).toString(),
+                playersPresent = mutableListOf("X")
             )
         )
         startGame()
@@ -109,6 +107,7 @@ class MainActivity : AppCompatActivity() {
                     binding.gameIdInput.error = "Please enter valid game ID"
                 }else{
                     model.gameStatus = GameStatus.JOINED
+                    model.playersPresent.add("O")
                     GameData.saveGameModel(model)
                     startGame()
                 }

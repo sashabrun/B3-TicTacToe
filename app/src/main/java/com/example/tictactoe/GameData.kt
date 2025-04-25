@@ -32,4 +32,20 @@ object GameData {
             }
         }
     }
+
+    fun markPlayerLeft(gameId: String) {
+        if (gameId != "-1") {
+            gameModel.value?.apply {
+                val updatedModel = this.copy()
+                updatedModel.playersPresent.remove(myID)
+
+                if ((updatedModel.gameStatus == GameStatus.JOINED || updatedModel.gameStatus == GameStatus.INPROGRESS) &&
+                    updatedModel.playersPresent.size < 2) {
+                    updatedModel.gameStatus = GameStatus.ABANDONED
+                }
+
+                saveGameModel(updatedModel)
+            }
+        }
+    }
 }
