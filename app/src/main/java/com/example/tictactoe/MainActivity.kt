@@ -3,10 +3,11 @@ package com.example.tictactoe
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuItem
+import android.view.animation.AnimationUtils
 import com.example.tictactoe.databinding.ActivityMainBinding
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import androidx.appcompat.app.AlertDialog
 import androidx.activity.OnBackPressedCallback
@@ -22,6 +23,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Set up action bar for the options menu
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        // Add animations to buttons
+        val buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.button_animation)
+        binding.playOfflineBtn.startAnimation(buttonAnimation)
+        binding.createOnlineGameBtn.startAnimation(buttonAnimation)
+        binding.joinOnlineGameBtn.startAnimation(buttonAnimation)
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 showExitConfirmationDialog()
@@ -29,15 +40,36 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.playOfflineBtn.setOnClickListener {
+            it.startAnimation(AnimationUtils.loadAnimation(this, R.anim.button_click))
             createOfflineGame()
         }
 
         binding.createOnlineGameBtn.setOnClickListener {
+            it.startAnimation(AnimationUtils.loadAnimation(this, R.anim.button_click))
             createOnlineGame()
         }
 
         binding.joinOnlineGameBtn.setOnClickListener {
+            it.startAnimation(AnimationUtils.loadAnimation(this, R.anim.button_click))
             joinOnlineGame()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_rules -> {
+                // Open Rules Activity with animation
+                val intent = Intent(this, RulesActivity::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -85,6 +117,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startGame() {
         startActivity(Intent(this, GameActivity::class.java))
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     private fun showExitConfirmationDialog() {

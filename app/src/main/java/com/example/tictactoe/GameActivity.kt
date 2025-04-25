@@ -3,6 +3,7 @@ package com.example.tictactoe
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.example.tictactoe.databinding.ActivityGameBinding
 import androidx.appcompat.app.AlertDialog
@@ -25,6 +26,8 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
             }
         })
 
+        val buttonAnimation = AnimationUtils.loadAnimation(this, R.anim.button_scale)
+
         binding.btn0.setOnClickListener(this)
         binding.btn1.setOnClickListener(this)
         binding.btn2.setOnClickListener(this)
@@ -36,8 +39,11 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
         binding.btn8.setOnClickListener(this)
 
         binding.startGameBtn.setOnClickListener {
+            it.startAnimation(buttonAnimation)
             startGame()
         }
+
+        binding.gameBoard.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in))
 
         GameData.fetchGameModel()
 
@@ -61,6 +67,13 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
 
             binding.startGameBtn.visibility = View.VISIBLE
 
+            if (winningLine.isNotEmpty() && gameStatus == GameStatus.FINISHED) {
+                binding.gameBoard.highlightWinningLine(winningLine.toTypedArray())
+                binding.gameBoard.startAnimation(AnimationUtils.loadAnimation(this@GameActivity, R.anim.victory_animation))
+            } else {
+                binding.gameBoard.clearWinningLine()
+            }
+
             binding.gameStatusText.text =
                 when(gameStatus){
                     GameStatus.CREATED -> {
@@ -76,7 +89,6 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                             currentPlayer -> "Your turn"
                             else -> "$currentPlayer turn"
                         }
-
                     }
                     GameStatus.FINISHED ->{
                         if(winner.isNotEmpty()) {
@@ -84,12 +96,10 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                                 winner -> "You won"
                                 else -> "$winner Won"
                             }
-
                         }
                         else "DRAW"
                     }
                 }
-
         }
     }
 
@@ -98,7 +108,9 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
             updateGameData(
                 GameModel(
                     gameId = gameId,
-                    gameStatus = GameStatus.INPROGRESS
+                    gameStatus = GameStatus.INPROGRESS,
+                    filledPos = mutableListOf("","","","","","","","",""),
+                    winningLine = listOf()
                 )
             )
         }
@@ -121,7 +133,7 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
         )
 
         gameModel?.apply {
-            for ( i in winningPos){
+            for (i in winningPos){
                 if(
                     filledPos[i[0]] == filledPos[i[1]] &&
                     filledPos[i[1]]== filledPos[i[2]] &&
@@ -129,10 +141,12 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 ){
                     gameStatus = GameStatus.FINISHED
                     winner = filledPos[i[0]]
+                    winningLine = i.toList()
+                    break
                 }
             }
 
-            if( filledPos.none(){ it.isEmpty() }){
+            if(filledPos.none(){ it.isEmpty() } && gameStatus != GameStatus.FINISHED){
                 gameStatus = GameStatus.FINISHED
             }
 
@@ -154,6 +168,8 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
 
             val clickedPos =(v?.tag  as String).toInt()
             if(filledPos[clickedPos].isEmpty()){
+                v.startAnimation(AnimationUtils.loadAnimation(this@GameActivity, R.anim.button_click))
+
                 filledPos[clickedPos] = currentPlayer
                 currentPlayer = if(currentPlayer=="X") "O" else "X"
                 checkForWinner()
@@ -168,8 +184,14 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
             .setMessage("Are you sure you want to leave the game?")
             .setPositiveButton("Yes") { _, _ ->
                 finish()
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
             }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }
